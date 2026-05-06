@@ -15,6 +15,8 @@ const getUserDataButton = document.getElementById("getUserData");
 const getUserFilesButton = document.getElementById("getUserFiles");
 const getDebugTokenButton = document.getElementById("getDebugToken");
 const getRegATokenButton = document.getElementById("getRegAToken");
+const getAppBTokenButton = document.getElementById("getAppBToken");
+const readMailAppBButton = document.getElementById("readMailAppB");
 const userName = document.getElementById("userName");
 const userEmail = document.getElementById("userEmail");
 
@@ -34,6 +36,12 @@ Office.onReady((info) => {
     }
     if (getRegATokenButton) {
       getRegATokenButton.addEventListener("click", showRegAToken);
+    }
+    if (getAppBTokenButton) {
+      getAppBTokenButton.addEventListener("click", showAppBToken);
+    }
+    if (readMailAppBButton) {
+      readMailAppBButton.addEventListener("click", readMailViaAppB);
     }
     // Initialize MSAL.
     accountManager.initialize();
@@ -108,6 +116,68 @@ async function getFileNames(count = 10) {
 
   const names = response.value.map((item: { name: string }) => item.name);
   return names;
+}
+
+/**
+ * Reads the user's recent emails by calling App B's /api/mail endpoint.
+ * App B validates the token and does OBO → Graph on the server side.
+ */
+async function readMailViaAppB() {
+  const mailList = document.getElementById("mailList");
+  const mailItems = document.getElementById("mailItems");
+
+  if (mailItems) mailItems.innerHTML = "<em>Loading…</em>";
+  if (mailList) mailList.style.display = "block";
+
+  try {
+    const token = await accountManager.ssoGetAccessToken([
+      "api://40cd1669-a61f-496a-a41d-3d7f44072486/access_as_user",
+    ]);
+
+    const response = await fetch("http://localhost:4000/api/mail", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await response.json() as {
+      error?: string;
+      messages?: { subject: string; from: { emailAddress: { name: string } }; receivedDateTime: string; isRead: boolean }[];
+    };
+
+    if (!response.ok || data.error) {
+      if (mailItems) mailItems.innerHTML = `<span style="color:red">Error: ${data.error}</span>`;
+      return;
+    }
+
+    if (mailItems) {
+      mailItems.innerHTML = (data.messages ?? []).map((m) =>
+        `<div style="padding:5px 0; border-bottom:1px solid #eee">
+          <div style="font-weight:${m.isRead ? "400" : "700"}">${m.subject || "(no subject)"}</div>
+          <div style="color:#666; font-size:10px">${m.from?.emailAddress?.name} &middot; ${new Date(m.receivedDateTime).toLocaleDateString()}</div>
+        </div>`
+      ).join("");
+    }
+  } catch (error) {
+    if (mailItems) mailItems.innerHTML = `<span style="color:red">${JSON.stringify(error, Object.getOwnPropertyNames(error))}</span>`;
+  }
+}
+
+/**
+ * DEBUG: Acquires a token scoped directly to App B via NAA (aud = App B client ID).
+ * Proves the taskpane can call App B without any middle-tier server.
+ * Requires Reg A's client ID pre-authorized in App B's Expose an API settings.
+ */
+async function showAppBToken() {
+  const debugTokenArea = document.getElementById("debugTokenArea");
+  const debugTokenEl = document.getElementById("debugToken") as HTMLTextAreaElement;
+  try {
+    const token = await accountManager.ssoGetAccessToken(["api://40cd1669-a61f-496a-a41d-3d7f44072486/access_as_user"]);
+    console.log("[DEBUG] App B token (direct NAA):", token);
+    if (debugTokenArea) debugTokenArea.style.display = "block";
+    if (debugTokenEl) debugTokenEl.value = token;
+  } catch (error) {
+    if (debugTokenArea) debugTokenArea.style.display = "block";
+    if (debugTokenEl) debugTokenEl.value = JSON.stringify(error, Object.getOwnPropertyNames(error), 2);
+  }
 }
 
 /**

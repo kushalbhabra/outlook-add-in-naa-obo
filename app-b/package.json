@@ -1,0 +1,21 @@
+{
+  "name": "app-b",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.16.2",
+    "@hono/node-server": "^1.13.7",
+    "dotenv": "^16.5.0",
+    "hono": "^4.7.7",
+    "jose": "^5.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}
