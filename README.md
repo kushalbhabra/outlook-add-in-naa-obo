@@ -169,13 +169,75 @@ See [Debug Office Add-ins on Windows using VS Code and Edge WebView2](https://le
 
 ## Troubleshooting
 
-| Error | Cause | Fix |
-|---|---|---|
-| `AADSTS65001` (consent required) | Graph permissions on App B not admin-consented | Azure portal → App B → API permissions → Grant admin consent |
-| `unexpected 'aud' claim value` | `jose` rejecting bare-GUID audience | Accept both `APP_B_CLIENT_ID` and `api://APP_B_CLIENT_ID` in `validateToken.ts` |
-| `ff000000` / error `3399614466` | NAA silent token acquisition failed | Add App A's own client ID to Expose an API → Authorized client applications |
-| OBO `AADSTS70003` (invalid grant type) | Wrong OBO grant type URN | Use `urn:ietf:params:oauth:grant-type:jwt-bearer` (no `2` after `oauth`) |
-| `AADSTS70011` (invalid scope) | Scope not configured on App B | Check `access_as_user` scope exists and is enabled on App B |
+### NAA token acquisition errors (taskpane → App B)
+
+**Error code `3399614475` — "Access denied for the resource"**
+
+The scope URI in the taskpane doesn't match App B's `identifierUris`. The NAA broker compares them exactly.
+
+- Check App B's manifest: `"identifierUris": ["api://..."]`
+- The scope passed to `ssoGetAccessToken` must be `<identifierUri>/access_as_user`
+- If App B uses a custom name (e.g. `api://outlook-target-api`), use that — not the GUID form `api://<client-id>`
+
+**Error code `3399614466` (`ff000000`) — NAA silent acquisition failed**
+
+App A's own client ID is not pre-authorized on itself.
+
+- Azure portal → App A → Expose an API → Authorized client applications
+- Add App A's **own** client ID with the `access_as_user` scope ticked
+- Without this, the NAA broker cannot issue tokens silently
+
+### OBO exchange errors (App B → Graph)
+
+**`AADSTS70003` — invalid_grant / unsupported grant type**
+
+The OBO grant type URN is wrong. This is the correct value:
+```
+urn:ietf:params:oauth:grant-type:jwt-bearer
+```
+There is **no `2`** after `oauth`. Using `PowerShell`'s `Invoke-RestMethod` with a hashtable body silently corrupts the colon-delimited value — use `curl.exe --data-urlencode` instead.
+
+**`AADSTS65001` — consent required**
+
+Graph delegated permissions on App B haven't been admin-consented.
+
+- Azure portal → App B → API permissions → Grant admin consent for \<tenant\>
+- Required permissions: `Mail.Read`, `User.Read` (and any others your app uses)
+
+### App B token validation errors
+
+**`unexpected 'aud' claim value`**
+
+`jose`'s `jwtVerify` rejected the token because the `aud` claim is a bare GUID (`40cd1669-...`) rather than the `api://` URI form.
+
+Accept both in `validateToken.ts`:
+```typescript
+audience: [APP_B_CLIENT_ID, `api://${APP_B_CLIENT_ID}`, "api://outlook-target-api"]
+```
+
+**`AADSTS70011` — invalid scope**
+
+The `access_as_user` scope doesn't exist or is disabled on App B.
+
+- Azure portal → App B → Expose an API → check the scope is listed and **Enabled**
+
+### Testing the OBO exchange manually
+
+Use `curl.exe` (not `Invoke-RestMethod`) to avoid PowerShell encoding issues:
+
+```powershell
+$assertion = "<app-b-token-from-taskpane>"
+curl.exe -s -X POST `
+  "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token" `
+  --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" `
+  --data-urlencode "client_id=<app-b-client-id>" `
+  --data-urlencode "client_secret=<app-b-client-secret>" `
+  --data-urlencode "assertion=$assertion" `
+  --data-urlencode "scope=https://graph.microsoft.com/.default" `
+  --data-urlencode "requested_token_use=on_behalf_of"
+```
+
+Decode the resulting token at [jwt.ms](https://jwt.ms) and confirm `aud = https://graph.microsoft.com`.
 
 ## Security reporting
 
