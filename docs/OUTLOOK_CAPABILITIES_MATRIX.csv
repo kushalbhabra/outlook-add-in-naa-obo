@@ -1,0 +1,62 @@
+Category,Feature Name,API Entry Point,Manifest Permission,Item Types,Forms,AI Copilot Opportunity,Min Mailbox Version,Priority,Implementation Complexity
+Email Operations,Message Compose & Send,Office.context.mailbox.item,ReadWriteItem,Message,Compose/Read,Smart validation: Pre-send AI checks for tone/professionalism/compliance,1.12+,CRITICAL,Medium
+Email Operations,Message Subject Management,item.subject.getAsync/setAsync,ReadWriteItem,Message,Compose/Read,Auto-subject generation: AI generates subject based on body content,1.1+,HIGH,Low
+Email Operations,Draft Management,item.saveAsync(),ReadWriteItem,Message,Compose,Auto-complete detection: AI suggests next steps/completions mid-draft,1.3+,MEDIUM,Low
+Email Operations,Message Threading,item properties,ReadItem,Message,Read,Thread summarization: AI summarizes long conversation threads,1.1+,HIGH,Medium
+Email Operations,OnMessageSend Event,OnMessageSend event,ReadWriteItem,Message,Compose,Smart Alerts: AI-powered send-time validation (block/warn/prompt),1.12+,CRITICAL,High
+Calendar Operations,Appointment Time Management,item.start/end.getAsync/setAsync,ReadWriteItem,Appointment,Compose/Read,Smart scheduling: AI suggests optimal meeting times,1.1+,HIGH,Medium
+Calendar Operations,Appointment Location Management,item.enhancedLocation or item.location,ReadWriteItem,Appointment,Compose/Read,Smart meeting setup: AI auto-populates video call links,1.8+,MEDIUM,Low
+Calendar Operations,Recurrence Pattern Management,item.recurrence.getAsync/setAsync,ReadWriteItem,Appointment,Compose/Read,Recurring pattern analysis: AI identifies meeting frequency patterns,1.7+,MEDIUM,Medium
+Calendar Operations,Meeting Request Management,AppointmentCompose/Read,ReadWriteItem,Appointment,Compose/Read,Meeting summary generation: AI summarizes action items from details,1.1+,HIGH,Medium
+Contacts & Recipients,Recipient Management,item.to/.cc/.bcc or item.requiredAttendees,ReadWriteItem,Message/Appointment,Compose/Read,Smart recipient suggestions: AI recommends who should be copied,1.1+,HIGH,Medium
+Contacts & Recipients,Recipient Change Events,OnMessageRecipientsChanged event,ReadWriteItem,Message,Compose,Dynamic permissions check: AI validates recipient access levels,1.11+,MEDIUM,Medium
+Contacts & Recipients,Recipient Validation,EmailAddressDetails,ReadWriteItem,Message/Appointment,Compose/Read,External recipient detection: AI flags external emails for compliance,1.1+,HIGH,Low
+Contacts & Recipients,From Account Selection,OnMessageFromChanged/OnAppointmentFromChanged,ReadWriteItem,Message/Appointment,Compose,Context-aware signatures: AI updates signature based on account,1.13+,MEDIUM,Low
+Contacts & Recipients,Address Resolution,recipient objects,ReadItem,Message/Appointment,Compose/Read,GAL intelligence: AI learns sender patterns from resolved recipients,1.1+,LOW,Low
+Attachments,Attachment Upload & Management,addFileAttachmentAsync(),ReadWriteItem,Message/Appointment,Compose,Attachment verification: AI scans files for sensitive data,1.1+,HIGH,Low
+Attachments,Attachment Retrieval & Access,attachments property,ReadItem,Message/Appointment,Read/Compose,Smart attachment analysis: AI extracts and processes file content,1.1+,HIGH,Medium
+Attachments,Attachment Content Download,getAttachmentContentAsync(),ReadItem,Message/Appointment,Read,AI document processing: Extract text/classify document type,1.8+,HIGH,Medium
+Attachments,Attachment Encryption,Custom + APIs,ReadWriteItem,Message,Compose,Auto-encryption: AI detects sensitive content then encrypts,1.1+,MEDIUM,High
+Attachments,Inline Image Embedding,addFileAttachmentFromBase64Async(),ReadWriteItem,Message/Appointment,Compose,Visual enhancement: AI generates inline diagrams/charts,1.8+,MEDIUM,Medium
+Attachments,Attachment Change Events,OnAttachmentAdded/Removed,ReadWriteItem,Message/Appointment,Compose,Real-time scanning: AI runs security checks on file add,1.10+,CRITICAL,Medium
+Attachments,Base64 Attachment Support,addFileAttachmentFromBase64Async(),ReadWriteItem,Message/Appointment,Compose,Generated documents: AI creates PDF/image attachments,1.8+,MEDIUM,Low
+Categories & Classifications,Category Master List,mailbox.masterCategories.getAsync/addAsync,ReadWriteMailbox,Message/Appointment,Read/Compose,Category intelligence: AI learns custom category semantics,1.8+,MEDIUM,Low
+Categories & Classifications,Item Categories,item.categories.getAsync/setAsync/addAsync,ReadWriteItem,Message/Appointment,Read/Compose,Auto-categorization: AI tags emails by content (project/priority),1.8+,CRITICAL,Medium
+Categories & Classifications,Sensitivity Label Management,item.sensitivityLabel.getAsync/setAsync,ReadWriteItem,Message/Appointment,Compose/Read,Compliance tagging: AI applies classification (Internal/Confidential),1.13+,HIGH,Medium
+Categories & Classifications,Label Change Events,OnSensitivityLabelChanged,ReadWriteItem,Message/Appointment,Compose,Dynamic enforcement: AI adjusts sharing based on label,1.13+,MEDIUM,Medium
+Events & Notifications,OnMessageSend,OnMessageSend event,ReadWriteItem,Message,Compose,Smart Alerts: AI validation (SoftBlock/Block/PromptUser modes),1.12+,CRITICAL,High
+Events & Notifications,OnAppointmentSend,OnAppointmentSend event,ReadWriteItem,Appointment,Compose,Meeting validation: AI checks attendee availability/conflicts,1.12+,HIGH,High
+Events & Notifications,OnNewMessageCompose,OnNewMessageCompose event,ReadWriteItem,Message,Compose,Auto-populate: AI prefills reply context/suggested recipients,1.10+,CRITICAL,Medium
+Events & Notifications,OnNewAppointment,OnNewAppointmentOrganizer event,ReadWriteItem,Appointment,Compose,Smart defaults: AI suggests time/location/attendees,1.10+,MEDIUM,Medium
+Events & Notifications,OnMessageRead,OnMessageRead event,ReadItem,Message,Read,Decryption/AI processing: Run AI when message opened,1.15+,MEDIUM,Medium
+Events & Notifications,ItemChanged Event,Office.EventType.ItemChanged,ReadItem,Message/Appointment,Read,Real-time UI update: AI refreshes analysis when item changes,1.5+,HIGH,Low
+Events & Notifications,Drag & Drop,Office.EventType.DragAndDropEvent,ReadItem,Message/Attachment,Read/Compose,AI file processing: Analyze dropped attachments/messages,Web+,MEDIUM,Medium
+Content & Body,Body Management,item.body.getAsync/setAsync/prependAsync,ReadWriteItem,Message/Appointment,Compose/Read,Smart replies: AI generates suggested message bodies,1.1+,CRITICAL,Medium
+Content & Body,Signature Management,body.setSignatureAsync(),ReadWriteItem,Message,Compose,Dynamic signatures: AI selects signature by context/sender,1.10+,MEDIUM,Low
+Content & Body,Rich Text Formatting,CoercionType.Html,ReadWriteItem,Message/Appointment,Compose,Formatted suggestions: AI provides rich HTML content,1.1+,MEDIUM,Low
+Content & Body,Cursor-Based Insertion,body.setSelectedDataAsync(),ReadWriteItem,Message/Appointment,Compose,Contextual insertion: AI places suggestions at cursor,1.1+,MEDIUM,Low
+Content & Body,Inline Images,addFileAttachmentFromBase64Async(),ReadWriteItem,Message/Appointment,Compose,Visual generation: AI embeds charts/diagrams inline,1.8+,LOW,Medium
+Content & Body,Body Type Detection,body.getTypeAsync(),ReadItem,Message/Appointment,Read/Compose,Format-aware AI: AI adapts suggestions to HTML vs plain text,1.1+,MEDIUM,Low
+Metadata,Custom Properties,item.customProperties.get/set,ReadWriteItem,Message/Appointment,Read/Compose,AI state tracking: Store AI analysis results on item,1.1+,HIGH,Low
+Metadata,Roaming Settings,roamingSettings.get/set/saveAsync(),ReadWriteMailbox,Message/Appointment,Read/Compose,User preferences: AI learns user preferences across sessions,1.1+,MEDIUM,Low
+Metadata,Session Data,item.sessionData.getAsync/setAsync,ReadWriteItem,Message/Appointment,Compose,Draft intelligence: Store composition state for AI context,1.11+,MEDIUM,Low
+Metadata,Internet Headers,item.internetHeaders.setAsync/getAsync,ReadWriteItem,Message,Compose/Read,Metadata enrichment: AI adds custom headers for tracking,1.8+,MEDIUM,Low
+Mobile Support,Mobile Event-Based Activation,OnNewMessageCompose (mobile),ReadWriteItem,Message,Compose,Mobile AI: Event triggers run on Android/iOS,1.11+,MEDIUM,Low
+Mobile Support,Mobile-Supported APIs,Limited Mailbox 1.7-1.14 APIs,ReadWriteItem,Message/Appointment,Read/Compose,Progressive AI: Adapt features by client capability,4.2352+,MEDIUM,Low
+Mobile Support,Mobile Task Pane,MobileMessageReadCommandSurface,ReadItem,Message,Read,Mobile UI: Optimize AI copilot for mobile screens,1.5+,MEDIUM,Medium
+Mobile Support,Online Meeting Integration (Mobile),MobileOnlineMeetingCommandSurface,ReadWriteItem,Appointment,Compose,Mobile meeting setup: Create Teams call from mobile,N/A,MEDIUM,Low
+Mobile Support,Appointment Logging for Mobile,MobileLogEventAppointmentAttendee,ReadItem,Appointment,Read,Mobile CRM logging: Log meeting to external system,N/A,LOW,Low
+Contextual UX,Task Pane Commands,ShowTaskpane action,ReadItem,Message/Appointment,Read/Compose,AI UI: Main copilot interface,N/A,CRITICAL,Low
+Contextual UX,Pinnable Task Pane,SupportsPinning manifest,ReadItem,Message,Read,Persistent AI: Keep copilot open across emails,1.5+,HIGH,Low
+Contextual UX,Function Commands,ExecuteFunction action,ReadItem/ReadWriteItem,Message/Appointment,Read/Compose,Headless AI: Run background AI without UI,N/A,MEDIUM,Low
+Contextual UX,Contextual Activation,ItemHasRegularExpressionMatch,ReadItem,Message/Appointment,Read,Smart triggers: AI activates on specific patterns,N/A,MEDIUM,Medium
+Contextual UX,Multi-Select Operations,SupportsMultiSelect manifest,ReadItem/ReadWriteItem,Message,Read,Bulk AI: Apply AI to multiple emails,1.13+,MEDIUM,Medium
+Contextual UX,Spam Reporting Integration,SpamReporting event,ReadItem,Message,Read,Phishing AI: Report suspicious emails,1.14+,HIGH,Medium
+Integration,Microsoft Graph API Access,getIdentityTokenAsync() then NAA,ReadItem/ReadWriteItem,Message/Appointment,Read/Compose,Graph-powered AI: Query Teams/calendar/contacts,1.12+,CRITICAL,High
+Integration,EWS Callback Token,getCallbackTokenAsync(),ReadItem/ReadWriteItem,Message/Appointment,Read/Compose,Server-side AI: Execute backend logic,1.1+,LOW,Low
+Integration,REST API for Attachments,/me/messages/{id}/attachments,ReadItem,Message,Read,REST-based scanning: Process attachments via Graph,N/A,MEDIUM,Medium
+Integration,Shared Mailbox Support,Office.context.mailbox.item,ReadItem/ReadWriteItem,Message/Appointment,Read/Compose,Team mailbox AI: Support team inboxes,1.13+,MEDIUM,Low
+Integration,Delegate Access,Office.context.mailbox.item,ReadItem/ReadWriteItem,Message/Appointment,Read/Compose,Delegate operations: Work on behalf of colleagues,1.8+,MEDIUM,Low
+Integration,Nested App Authentication (NAA),getIdentityTokenAsync(),ReadItem,Message/Appointment,Read/Compose,Secure backend: Auth for custom AI services,1.12+,CRITICAL,High
+Integration,Item ID Conversion,convertToRestId(),ReadItem,Message/Appointment,Read,ID normalization: Convert for Graph/REST APIs,1.3+,MEDIUM,Low
+Integration,Location Services,getIsOpenFromLocationAllowed(),None,Message/Appointment,Read/Compose,Cloud integration: Check cloud storage permissions,N/A,LOW,Low

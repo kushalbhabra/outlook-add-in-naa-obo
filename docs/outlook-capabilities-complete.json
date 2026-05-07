@@ -1,0 +1,765 @@
+{
+  "capabilities": [
+    {
+      "category": "Email Operations",
+      "featureName": "Message Compose and Send",
+      "description": "Create and send new messages, replies, reply-all, and forwarded messages with full control over content and recipients.",
+      "apiEntryPoint": "Office.context.mailbox.item (MessageCompose/MessageRead)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem", "ReadWriteMailbox"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-set-signature",
+        "Office-Add-in-samples/Samples/outlook-encrypt-decrypt-messages"
+      ],
+      "notes": "Compose mode available for new messages, replies, reply-all, and forwards. Smart Alerts (OnMessageSend) requires Mailbox 1.12+. OnMessageRecipientsChanged event available in Mailbox 1.11+"
+    },
+    {
+      "category": "Email Operations",
+      "featureName": "Message Subject Management",
+      "description": "Get and set the subject line of messages in compose and read modes using async methods.",
+      "apiEntryPoint": "Office.context.mailbox.item.subject (getAsync, setAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-or-set-the-subject.md"
+      ],
+      "notes": "Minimum 255 characters. Read-only in read mode. getAsync/setAsync required in compose mode."
+    },
+    {
+      "category": "Email Operations",
+      "featureName": "Draft Management and Save",
+      "description": "Save draft messages programmatically during composition to get item IDs and manage unsaved state.",
+      "apiEntryPoint": "Office.context.mailbox.item.saveAsync() and getItemIdAsync()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "saveAsync introduced in Mailbox 1.3. getItemIdAsync introduced in Mailbox 1.8 for easier draft identification."
+    },
+    {
+      "category": "Email Operations",
+      "featureName": "Message Threading and Conversation View",
+      "description": "Access and work with threaded messages and conversation data within Outlook.",
+      "apiEntryPoint": "Office.context.mailbox.item (MessageRead properties)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [],
+      "notes": "Body retrieval supports bodyMode option (FullBody, HostConfig) to respect user's message organization setting."
+    },
+    {
+      "category": "Calendar Operations",
+      "featureName": "Appointment Time Management",
+      "description": "Get and set start/end times for appointments being composed using async methods.",
+      "apiEntryPoint": "Office.context.mailbox.item.start and item.end (getAsync, setAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-or-set-the-time-of-an-appointment.md"
+      ],
+      "notes": "Returns/accepts UTC Date objects. Minimum Mailbox 1.1. Read-only in read mode for attendees."
+    },
+    {
+      "category": "Calendar Operations",
+      "featureName": "Appointment Location Management",
+      "description": "Manage appointment locations with enhanced location API supporting location types (room, address, URL, etc.).",
+      "apiEntryPoint": "Office.context.mailbox.item.enhancedLocation (addAsync, getAsync, removeAsync) or item.location (getAsync, setAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-or-set-the-location-of-an-appointment.md"
+      ],
+      "notes": "enhancedLocation (Mailbox 1.8+) supports LocationIdentifier with types. location (Mailbox 1.1+) for basic string-based locations."
+    },
+    {
+      "category": "Calendar Operations",
+      "featureName": "Recurrence Pattern Management",
+      "description": "Get and set recurring appointment patterns (daily, weekly, monthly, yearly) with complex properties.",
+      "apiEntryPoint": "Office.context.mailbox.item.recurrence (getAsync, setAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-and-set-recurrence.md"
+      ],
+      "notes": "Mailbox 1.7+. Organizers can set; attendees read-only. Supports SeriesTime object for date/time ranges."
+    },
+    {
+      "category": "Calendar Operations",
+      "featureName": "Meeting Request Management",
+      "description": "Work with meeting requests, responses (Accept, Tentative, Decline), and meeting cancellations.",
+      "apiEntryPoint": "Office.context.mailbox.item (AppointmentCompose, AppointmentRead)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [],
+      "notes": "Attendees can propose new times. Organizers control final details. Reply mode extends compose capabilities."
+    },
+    {
+      "category": "Contacts & Recipients",
+      "featureName": "Recipient Management",
+      "description": "Get, set, and add recipients (To, Cc, Bcc) for messages and required/optional attendees for appointments.",
+      "apiEntryPoint": "Office.context.mailbox.item.to/.cc/.bcc (getAsync, setAsync, addAsync) and item.requiredAttendees/.optionalAttendees",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-set-or-add-recipients.md"
+      ],
+      "notes": "Returns EmailAddressDetails objects. Compose mode requires getAsync due to async nature. recipient types: smtp, gal, list"
+    },
+    {
+      "category": "Contacts & Recipients",
+      "featureName": "Recipient Change Events",
+      "description": "Detect when recipients are added or removed in a message being composed.",
+      "apiEntryPoint": "OnMessageRecipientsChanged event with RecipientsChangedEventArgs",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/mobile-event-based.md"
+      ],
+      "notes": "Mailbox 1.11+. Mobile support: Android 4.2425.0+, iOS 4.2425.0+. Event provides access to current recipients."
+    },
+    {
+      "category": "Contacts & Recipients",
+      "featureName": "Recipient Validation and Address Resolution",
+      "description": "Validate email addresses and resolve recipients against the Global Address List.",
+      "apiEntryPoint": "Office.context.mailbox.item (recipient objects and EmailAddressDetails)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "Automatic validation through Outlook. Can detect distribution lists and external recipients."
+    },
+    {
+      "category": "Contacts & Recipients",
+      "featureName": "From Account Selection",
+      "description": "Detect when the From field (sender account) changes in a message or appointment organizer.",
+      "apiEntryPoint": "OnMessageFromChanged and OnAppointmentFromChanged events",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/onmessagefromchanged-onappointmentfromchanged-events.md"
+      ],
+      "notes": "Mailbox 1.13+. Useful for updating signatures based on active account. Mobile support for OnMessageFromChanged."
+    },
+    {
+      "category": "Tasks & To-Do",
+      "featureName": "Task Item Support (Limited)",
+      "description": "Limited support for Task item types in Outlook add-ins; primarily handled through other item types.",
+      "apiEntryPoint": "Office.context.mailbox.item",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Task"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [],
+      "notes": "Tasks are read-only in add-ins. No compose mode support. Focus is on Message and Appointment types."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Attachment Upload and Management",
+      "description": "Add file attachments and Outlook item attachments to messages and appointments during composition.",
+      "apiEntryPoint": "Office.context.mailbox.item.addFileAttachmentAsync(), addFileAttachmentFromBase64Async(), addItemAttachmentAsync()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-encrypt-attachments",
+        "office-js-docs-pr/docs/outlook/add-and-remove-attachments-to-an-item-in-a-compose-form.md"
+      ],
+      "notes": "Mailbox 1.1 for classic/Mac, 1.8+ for web/new Windows. Base64 encoding (1.8+) for binary files. Item attachment supports messages/appointments."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Attachment Retrieval and Access",
+      "description": "Get attachment metadata and content from read-mode messages and appointments.",
+      "apiEntryPoint": "Office.context.mailbox.item.attachments (read mode) or getAttachmentsAsync() (compose mode)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "attachments property (1.1+) for read mode. getAttachmentsAsync (1.8+) for compose. Returns AttachmentDetails array."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Attachment Content Download",
+      "description": "Download attachment content as Base64-encoded data from Exchange for processing or storage.",
+      "apiEntryPoint": "Office.context.mailbox.item.getAttachmentContentAsync()",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "Mailbox 1.8+. Returns Base64-encoded content. Can retrieve from Exchange or via Microsoft Graph REST API."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Attachment Encryption",
+      "description": "Encrypt and decrypt message attachments for enhanced security and compliance.",
+      "apiEntryPoint": "Custom encryption implementation with addFileAttachmentFromBase64Async()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-encrypt-attachments",
+        "office-js-docs-pr/docs/outlook/encryption-decryption.md"
+      ],
+      "notes": "Custom encryption logic required. OnAttachmentAdded event (Mailbox 1.10+) triggers encryption on file add."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Inline Attachment Embedding",
+      "description": "Embed Base64-encoded images inline in message body using Content ID references.",
+      "apiEntryPoint": "Office.context.mailbox.item.addFileAttachmentFromBase64Async() with isInline: true + body.prependAsync()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [],
+      "notes": "Use cid:filename references in HTML body. addFileAttachmentFromBase64Async (1.8+). Body APIs Mailbox 1.1+."
+    },
+    {
+      "category": "Attachments",
+      "featureName": "Attachment Change Events",
+      "description": "Detect when attachments are added or removed from a message or appointment.",
+      "apiEntryPoint": "OnAttachmentAdded and OnAttachmentRemoved events",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-encrypt-attachments"
+      ],
+      "notes": "Mailbox 1.10+. OnAttachmentAdded can trigger automatic processing (e.g., encryption)."
+    },
+    {
+      "category": "Categories & Classifications",
+      "featureName": "Category Management - Master List",
+      "description": "Create, retrieve, and manage the master list of color-coded categories for a mailbox.",
+      "apiEntryPoint": "Office.context.mailbox.masterCategories (addAsync, getAsync, removeAsync)",
+      "requiredManifestPermissions": ["ReadWriteMailbox"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/categories.md"
+      ],
+      "notes": "Mailbox 1.8+. Returns CategoryDetails array with name and color. Requires MailboxItem or Mailbox permissions."
+    },
+    {
+      "category": "Categories & Classifications",
+      "featureName": "Category Assignment to Items",
+      "description": "Apply, retrieve, and remove categories from individual messages and appointments.",
+      "apiEntryPoint": "Office.context.mailbox.item.categories (addAsync, getAsync, removeAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-check-item-categories",
+        "office-js-docs-pr/docs/outlook/categories.md"
+      ],
+      "notes": "Mailbox 1.8+. Categories must exist in master list first. Async operations for compose mode."
+    },
+    {
+      "category": "Categories & Classifications",
+      "featureName": "Sensitivity Label Management",
+      "description": "Get, set, and manage Microsoft Purview Information Protection sensitivity labels on messages and appointments.",
+      "apiEntryPoint": "Office.context.mailbox.item.sensitivityLabel (getAsync, setAsync) and Office.context.sensitivityLabelsCatalog",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-verify-sensitivity-label",
+        "office-js-docs-pr/docs/outlook/sensitivity-label.md"
+      ],
+      "notes": "Mailbox 1.13+. Requires Microsoft 365 E5 or trial. Catalog must be enabled. Supports sublabels."
+    },
+    {
+      "category": "Categories & Classifications",
+      "featureName": "Sensitivity Label Change Detection",
+      "description": "Detect when a sensitivity label is applied, changed, or removed from a message or appointment.",
+      "apiEntryPoint": "OnSensitivityLabelChanged event",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [],
+      "notes": "Mailbox 1.13+. Allows automatic reactions to label changes (e.g., disabling external recipients)."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "On Message Send Event (Smart Alerts)",
+      "description": "Execute code when user selects Send on a message, allowing validation, modification, or blocking of send.",
+      "apiEntryPoint": "OnMessageSend event with Smart Alerts support (PromptUser, SoftBlock, Block send modes)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/onmessagesend-onappointmentsend-events.md",
+        "office-js-docs-pr/docs/outlook/smart-alerts-onmessagesend-walkthrough.md"
+      ],
+      "notes": "Mailbox 1.12+. Send modes: PromptUser (default), SoftBlock, Block. Can programmatically send after validation."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "On Appointment Send Event",
+      "description": "Execute code when user selects Send on an appointment/meeting request, enabling validation and modification.",
+      "apiEntryPoint": "OnAppointmentSend event with same Smart Alerts modes as OnMessageSend",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/onmessagesend-onappointmentsend-events.md"
+      ],
+      "notes": "Mailbox 1.12+. Block/SoftBlock/PromptUser modes available. Can enforce compliance policies before send."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "On New Message Compose Event",
+      "description": "Automatically run code when a new message composition is initiated (new, reply, reply-all, forward).",
+      "apiEntryPoint": "OnNewMessageCompose event",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/on-new-compose-events-walkthrough.md"
+      ],
+      "notes": "Mailbox 1.10+. Mobile support (Android/iOS 4.2352.0+). Can auto-populate subject, body, signatures."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "On New Appointment Compose Event",
+      "description": "Automatically run code when a new appointment or meeting request composition is initiated.",
+      "apiEntryPoint": "OnNewAppointmentOrganizer event",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/on-new-compose-events-walkthrough.md"
+      ],
+      "notes": "Mailbox 1.10+. Can set initial subject, time, location, and required attendees."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "On Message Read Event (Preview)",
+      "description": "Execute code when a message is opened for reading, enabling encryption/decryption and specialized processing.",
+      "apiEntryPoint": "OnMessageRead event with MessageDecryptEventCompletedOptions (Preview)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/encryption-decryption.md"
+      ],
+      "notes": "Mailbox 1.15 (Preview). Currently classic Outlook Windows only (v2510+). Requires registry setting for beta APIs."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "Item Changed Event (Read Mode)",
+      "description": "Notify add-in when a different message or appointment is selected, updating task pane UI accordingly.",
+      "apiEntryPoint": "Office.EventType.ItemChanged event via addHandlerAsync()",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/pinnable-taskpane.md"
+      ],
+      "notes": "Mailbox 1.5+. Enables pinnable task panes to update on item selection. Used for keeping task pane open."
+    },
+    {
+      "category": "Events & Notifications",
+      "featureName": "Drag and Drop Event",
+      "description": "Handle drag-and-drop of messages and attachments into add-in task pane with file content access.",
+      "apiEntryPoint": "Office.EventType.DragAndDropEvent with DragAndDropEventArgs and dataTransfer.files",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Attachment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/drag-drop-items.md"
+      ],
+      "notes": "Web/new Windows: Office.js API. Classic/Mac: HTML Drag and Drop API. Files returned as .eml (web/new) or .msg/.eml."
+    },
+    {
+      "category": "Content & Body",
+      "featureName": "Message/Appointment Body Management",
+      "description": "Get body content in HTML or plain text format, and set/insert body content during composition.",
+      "apiEntryPoint": "Office.context.mailbox.item.body (getAsync, setAsync, prependAsync, setSelectedDataAsync, getTypeAsync)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/insert-data-in-the-body.md"
+      ],
+      "notes": "Mailbox 1.1+. Compose: setAsync/prependAsync for text or HTML. Read: bodyMode option (1.11+) for conversation control."
+    },
+    {
+      "category": "Content & Body",
+      "featureName": "Signature Management",
+      "description": "Set or replace email signatures, including account-specific signatures on From field changes.",
+      "apiEntryPoint": "Office.context.mailbox.item.body.setSignatureAsync() and disableClientSignatureAsync()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-set-signature",
+        "office-js-docs-pr/docs/outlook/onmessagefromchanged-onappointmentfromchanged-events.md"
+      ],
+      "notes": "Mailbox 1.10+. setSignatureAsync inserts at end. disableClientSignatureAsync prevents default signature. Mobile support (1.10+)."
+    },
+    {
+      "category": "Content & Body",
+      "featureName": "Rich Text and HTML Formatting",
+      "description": "Insert formatted HTML content into messages and appointments with support for inline images and styles.",
+      "apiEntryPoint": "Office.context.mailbox.item.body methods with Office.CoercionType.Html",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [],
+      "notes": "Verify body type with getTypeAsync before inserting. HTML text format may need conversion from plain text items."
+    },
+    {
+      "category": "Content & Body",
+      "featureName": "Cursor-Based Content Insertion",
+      "description": "Insert content at the current cursor position in the message or appointment body.",
+      "apiEntryPoint": "Office.context.mailbox.item.body.setSelectedDataAsync()",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [],
+      "notes": "Mailbox 1.1+. Max 1,000,000 characters per insertion. Replaces selected text if any. Fails if cursor simultaneously changed."
+    },
+    {
+      "category": "Content & Body",
+      "featureName": "Inline Base64 Image Embedding",
+      "description": "Insert Base64-encoded images directly into message body as inline images using Content ID.",
+      "apiEntryPoint": "Office.context.mailbox.item.addFileAttachmentFromBase64Async() + body methods",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [],
+      "notes": "Mailbox 1.8+. Must call body.getAsync first. Use cid:filename in HTML img src. Set isInline: true in attachment options."
+    },
+    {
+      "category": "Metadata",
+      "featureName": "Custom Properties (Item-Level)",
+      "description": "Store and retrieve custom metadata on individual mail items, accessible only by the add-in that created it.",
+      "apiEntryPoint": "Office.context.mailbox.item.customProperties (get, set)",
+      "requiredManifestPermissions": ["ReadWriteItem", "ReadWriteMailbox"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "Mailbox 1.1+. Data persists in Exchange. Not accessible after item leaves server. Max 32KB total."
+    },
+    {
+      "category": "Metadata",
+      "featureName": "Roaming Settings (Mailbox-Level)",
+      "description": "Store and retrieve user preferences and mailbox-level settings accessible across all devices and sessions.",
+      "apiEntryPoint": "Office.context.roamingSettings (get, set, remove, saveAsync)",
+      "requiredManifestPermissions": ["ReadWriteMailbox"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/metadata-for-an-outlook-add-in.md"
+      ],
+      "notes": "Mailbox 1.1+. JSON-serialized data. Roams across devices. Must call saveAsync to persist. ~32KB limit."
+    },
+    {
+      "category": "Metadata",
+      "featureName": "Session Data (Compose-Session-Level)",
+      "description": "Store temporary data for the current composition session only, cleared when compose completes.",
+      "apiEntryPoint": "Office.context.mailbox.item.sessionData (getAsync, setAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/metadata-for-an-outlook-add-in.md"
+      ],
+      "notes": "Mailbox 1.11+. Data not persisted after send/discard. Useful for draft-specific state. Mobile support (4.2425.0+)."
+    },
+    {
+      "category": "Metadata",
+      "featureName": "Internet Headers",
+      "description": "Set, get, and remove custom internet headers on messages for cross-client and cross-server identification.",
+      "apiEntryPoint": "Office.context.mailbox.item.internetHeaders (setAsync, getAsync, removeAsync)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose", "Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/internet-headers.md"
+      ],
+      "notes": "Mailbox 1.8+. Headers persist after send. Mobile support (Android/iOS 4.2405.0+). Custom headers identified by X- prefix convention."
+    },
+    {
+      "category": "Mobile Support",
+      "featureName": "Mobile Event-Based Activation",
+      "description": "Run event handlers automatically on Android and iOS Outlook clients for message compose and recipient changes.",
+      "apiEntryPoint": "OnNewMessageCompose, OnMessageRecipientsChanged, OnMessageFromChanged events on mobile",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/mobile-event-based.md"
+      ],
+      "notes": "Android/iOS Mailbox 1.5 core, 1.11+ for extended events. Supports signature management and recipient detection on mobile."
+    },
+    {
+      "category": "Mobile Support",
+      "featureName": "Mobile-Supported APIs",
+      "description": "Subset of Office.js APIs now enabled for Outlook mobile clients despite Mailbox 1.5 core support.",
+      "apiEntryPoint": "Limited APIs from Mailbox 1.7-1.14 (see docs for complete list)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/outlook-mobile-apis.md"
+      ],
+      "notes": "Android/iOS support varies by API. addFileAttachmentFromBase64Async (4.2352.0+), setSignatureAsync, body.getTypeAsync supported."
+    },
+    {
+      "category": "Mobile Support",
+      "featureName": "Mobile Task Pane Interface",
+      "description": "Design and implement add-in task panes optimized for Outlook mobile clients on iOS and Android.",
+      "apiEntryPoint": "MobileMessageReadCommandSurface ExtensionPoint with mobile button controls",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/outlook-mobile-addins.md"
+      ],
+      "notes": "Only Message Read mode primarily supported. Meeting/CRM apps can use Appointment modes. Icon sizes: 16x16, 32x32, 80x80 pixels."
+    },
+    {
+      "category": "Mobile Support",
+      "featureName": "Online Meeting Provider Integration (Mobile)",
+      "description": "Create online meetings from Outlook mobile appointments using integrated providers like Teams.",
+      "apiEntryPoint": "MobileOnlineMeetingCommandSurface ExtensionPoint (Appointment Organizer)",
+      "requiredManifestPermissions": ["ReadWriteItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/online-meeting.md"
+      ],
+      "notes": "Exception to mobile compose limitations. Requires provider integration. Android/iOS support."
+    },
+    {
+      "category": "Mobile Support",
+      "featureName": "Appointment Logging for Mobile Attendees",
+      "description": "Allow Outlook mobile users to log meeting details to external systems (CRM, note-taking) in attendee mode.",
+      "apiEntryPoint": "MobileLogEventAppointmentAttendee ExtensionPoint",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Appointment"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/mobile-log-appointments.md"
+      ],
+      "notes": "For CRM and note-taking apps. Provides read-only appointment details in mobile attendee view."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Task Pane Commands",
+      "description": "Display a vertical task pane for detailed add-in interactions, accessible from ribbon buttons or contextual triggers.",
+      "apiEntryPoint": "ShowTaskpane action in ribbon definition (Office.js)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "Default add-in integration method. Supports SourceLocation with URL. Can be triggered by ribbon buttons or contextual add-ins."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Pinnable Task Pane",
+      "description": "Allow users to keep a task pane open across messages without closing, improving heavy-use workflows.",
+      "apiEntryPoint": "SupportsPinning element in manifest action definition",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/pinnable-taskpane.md"
+      ],
+      "notes": "Mailbox 1.5+. Supported in modern Outlook web, new Windows, classic 2016+, and Mac 16.13+. Not supported for appointments."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Function Commands (No UI)",
+      "description": "Execute background functions triggered by ribbon buttons without displaying visible UI.",
+      "apiEntryPoint": "ExecuteFunction action in ribbon definition",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/online-meeting.md"
+      ],
+      "notes": "Uses Runtime for execution. Can perform background tasks like validation or API calls. Returns completion status."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Contextual Add-ins (Regular Expression Activation)",
+      "description": "Activate add-in automatically when specific text patterns (regex) are found in message body.",
+      "apiEntryPoint": "DetectedEntity ExtensionPoint with ItemHasRegularExpressionMatch rule",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/contextual-outlook-add-ins.md"
+      ],
+      "notes": "Read mode only. Entity-based activation deprecated. Uses getRegExMatches() and getRegExMatchesByName()."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Multi-Select Item Operations",
+      "description": "Operate on multiple selected messages at once for bulk operations like categorization or upload.",
+      "apiEntryPoint": "SupportsMultiSelect element in manifest with multiselect: true in runtime actions",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/item-multi-select.md"
+      ],
+      "notes": "Mailbox 1.13+. Get selected items via Office.context.mailbox.getSelectedItemsAsync(). Classic Windows only (unified manifest)."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Contextless Activation (No Item Required)",
+      "description": "Activate add-in task pane even when no message is selected, for mailbox-wide operations.",
+      "apiEntryPoint": "supportsNoItemContext: true in runtime actions (unified manifest)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": [],
+      "supportedForms": [],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/contextless.md"
+      ],
+      "notes": "Mailbox 1.15+. Enables add-in access without selecting a mail item. Useful for mailbox-level operations."
+    },
+    {
+      "category": "Contextual UX",
+      "featureName": "Spam Reporting Integration",
+      "description": "Integrate with Outlook's native spam reporting UI to report unsolicited emails to your backend system.",
+      "apiEntryPoint": "SpamReporting event with preprocessing dialog and SpamReporting action in manifest",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "Office-Add-in-samples/Samples/outlook-spam-reporting",
+        "office-js-docs-pr/docs/outlook/spam-reporting.md"
+      ],
+      "notes": "Mailbox 1.14+. Prominent ribbon placement. Dialog supports checkboxes, radio buttons (Mac preview), text input. File export for processing."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Microsoft Graph API Access",
+      "description": "Access Outlook mail REST APIs through Microsoft Graph for advanced scenarios beyond Office.js.",
+      "apiEntryPoint": "Nested App Authentication (NAA) for token, then fetch https://graph.microsoft.com/v1.0 endpoints",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/microsoft-graph.md",
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "Requires NAA implementation. Access item ID via itemId (convert with convertToRestId for REST). Query filters and projections supported."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Exchange Web Services (EWS) Callback Token",
+      "description": "Get callback token for server-side EWS calls to perform operations not available via Office.js.",
+      "apiEntryPoint": "Office.context.mailbox.getCallbackTokenAsync()",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "Deprecated approach; use Microsoft Graph via NAA instead. Mailbox 1.1+. Token valid for one EWS call."
+    },
+    {
+      "category": "Integration",
+      "featureName": "REST API for Attachments",
+      "description": "Retrieve attachment content and metadata via Microsoft Graph REST API when Office.js APIs insufficient.",
+      "apiEntryPoint": "GET /me/messages/{messageId}/attachments with NAA token",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "Preferred for Outlook on-premises environments. Requires item ID conversion to REST format."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Shared Mailbox Support",
+      "description": "Access and perform operations on shared mailboxes that users have permissions to manage.",
+      "apiEntryPoint": "Office.context.mailbox.item (works on shared mailbox items)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/delegate-access.md"
+      ],
+      "notes": "Mailbox 1.13+. Exchange Online supported. Desktop/web/Mac support varies. Auto-mapped by admin or user-added."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Delegate Access (Shared Folders)",
+      "description": "Work with folders delegated to you by other mailbox owners, including calendar and inbox folders.",
+      "apiEntryPoint": "Office.context.mailbox.item (works on delegated items)",
+      "requiredManifestPermissions": ["ReadItem", "ReadWriteItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/delegate-access.md"
+      ],
+      "notes": "Mailbox 1.8+. Delegate configures access via Outlook settings. Add-in APIs work transparently on delegate's folders."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Nested App Authentication (NAA)",
+      "description": "Obtain access tokens for Microsoft Graph and external APIs using the user's identity without prompting.",
+      "apiEntryPoint": "Office.context.mailbox.getIdentityTokenAsync() then NAA token endpoint",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "Mailbox 1.12+. Replaces deprecated token methods. Requires backend service to exchange for Graph token."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Item ID Conversion (EWS to REST)",
+      "description": "Convert Exchange Web Services item IDs to REST-compatible IDs for Microsoft Graph operations.",
+      "apiEntryPoint": "Office.context.mailbox.convertToRestId(itemId, restVersion)",
+      "requiredManifestPermissions": ["ReadItem"],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read"],
+      "sampleFiles": [
+        "office-js-docs-pr/docs/outlook/get-attachments-of-an-outlook-item.md"
+      ],
+      "notes": "Mailbox 1.3+. Required for non-mobile clients when using REST APIs. Specify Office.MailboxEnums.RestVersion.v2_0."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Location Services (Open/Save Permissions)",
+      "description": "Check whether user has allowed the add-in to open from and save to cloud storage locations.",
+      "apiEntryPoint": "Office.context.mailbox.getIsOpenFromLocationAllowed() and getIsSaveToLocationAllowed()",
+      "requiredManifestPermissions": [],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "No minimum requirement set; used to check capabilities before attempting cloud operations."
+    },
+    {
+      "category": "Integration",
+      "featureName": "Identity Management Detection",
+      "description": "Detect whether user is managed by their organization (AAD identity) vs. personal account.",
+      "apiEntryPoint": "Office.context.mailbox.getIsIdentityManaged()",
+      "requiredManifestPermissions": [],
+      "supportedItemTypes": ["Message", "Appointment"],
+      "supportedForms": ["Read", "Compose"],
+      "sampleFiles": [],
+      "notes": "No min requirement set. Mobile support (Android/iOS 4.2443.0+). Useful for license checking or feature availability."
+    }
+  ]
+}
