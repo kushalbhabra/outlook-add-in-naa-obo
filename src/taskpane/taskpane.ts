@@ -131,7 +131,7 @@ async function readMailViaAppB() {
 
   try {
     const token = await accountManager.ssoGetAccessToken([
-      "api://40cd1669-a61f-496a-a41d-3d7f44072486/access_as_user",
+      "api://outlook-target-api/access_as_user",
     ]);
 
     const response = await fetch("http://localhost:4000/api/mail", {
@@ -170,7 +170,7 @@ async function showAppBToken() {
   const debugTokenArea = document.getElementById("debugTokenArea");
   const debugTokenEl = document.getElementById("debugToken") as HTMLTextAreaElement;
   try {
-    const token = await accountManager.ssoGetAccessToken(["api://40cd1669-a61f-496a-a41d-3d7f44072486/access_as_user"]);
+    const token = await accountManager.ssoGetAccessToken(["api://outlook-target-api/access_as_user"]);
     console.log("[DEBUG] App B token (direct NAA):", token);
     if (debugTokenArea) debugTokenArea.style.display = "block";
     if (debugTokenEl) debugTokenEl.value = token;

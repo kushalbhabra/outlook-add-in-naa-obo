@@ -20,7 +20,7 @@ export async function validateToken(authHeader: string | undefined): Promise<Tok
   }
   const token = authHeader.slice(7);
   const { payload } = await jwtVerify(token, JWKS, {
-    audience: [APP_B_CLIENT_ID, `api://${APP_B_CLIENT_ID}`],
+    audience: [APP_B_CLIENT_ID, `api://${APP_B_CLIENT_ID}`, "api://outlook-target-api"],
     issuer: `https://login.microsoftonline.com/${TENANT_ID}/v2.0`,
   });
   const scp = payload["scp"] as string | undefined;
