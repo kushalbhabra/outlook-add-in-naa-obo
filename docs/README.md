@@ -65,6 +65,21 @@ Structured data for programmatic access:
 
 ---
 
+### 5. **ONEDRIVE_FILE_PICKER_GUIDE.md** 🟣 FILE PICKER INTEGRATION
+**OneDrive/SharePoint File Picker v8 research notes**
+
+How to embed the Microsoft-hosted file picker (files + folders) in an Outlook add-in and Teams app:
+- Picker v8 protocol (POST to `FilePicker.aspx` + `postMessage`/`MessageChannel`)
+- Office Dialog API integration (`displayDialogAsync`) + task-pane iframe option
+- Folder picking configs (folder-only mode, save-as, deep-link into folders)
+- Auth patterns: MSAL, Office SSO + OBO, NAA (matches this repo's `app-b/` chain)
+- Manifest changes (`AppDomains`, `webApplicationInfo`) and required AAD permissions
+- Teams Toolkit pattern from `OneDrive/samples` → `teams-picker`
+
+**Best for**: Developers adding OneDrive/SharePoint file picking to the add-in
+
+---
+
 ## 🚀 Quick Start
 
 ### For Developers (5 minutes)
